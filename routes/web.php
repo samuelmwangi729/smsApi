@@ -11,6 +11,5 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/','GenerateController@index');
+Route::get('/generate','GenerateController@generate');
