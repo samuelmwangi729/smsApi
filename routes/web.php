@@ -11,5 +11,9 @@
 |
 */
 
-Route::get('/','GenerateController@index');
-Route::get('/generate','GenerateController@generate');
+Route::get('/','GenerateController@generate');
+Route::get('/login','GenerateController@generate');
+Route::get('/register','GenerateController@generate');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
