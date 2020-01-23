@@ -4,7 +4,7 @@
 <div class="row">
     @foreach ($numbers as $number)
     <div class="col-sm-2">
-        {{ $number->id.":".$number->number }}
+        {{ $number->number }}
     </div>
     @endforeach
 </div>
