@@ -39,7 +39,10 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('phone.get',['user'=>'sam','time'=>time(),'phone'=>'+254704922042']) }}">{{ __('Get Phone') }}</a>
+                            <a class="nav-link" href="{{ route('phone.get',['user'=>'sam','time'=>time(),'sign'=>'99b5c9b32e99677baf23488be20597cf','phone'=>'+254704922042']) }}">{{ __('Get Phone') }}</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="/help">Help</a>
                         </li>
                         <!-- Authentication Links -->
                         @guest

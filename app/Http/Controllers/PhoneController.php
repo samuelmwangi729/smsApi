@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Number;
+use App\User;
+use App\Sign;
 use Illuminate\Http\Request;
 
 class PhoneController extends Controller
@@ -13,6 +15,43 @@ class PhoneController extends Controller
      */
     public function index(Request $request)
     {
+        
+        $signExists=Sign::where('sign',$request->sign)->get()->first();
+        if($signExists->count()==1){
+           $user=User::find($signExists->id);
+           if($user->count()==1){
+              if($user->email==$request->user){
+                  $number=Number::where('number',$request->phone)->get()->count();
+                  if($number>0){
+                    $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Found','res'=>'true'];
+                    return response()->json([$data],200);
+                  }else{
+                        $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'true'];
+                        return response()->json([$data],200);
+                  }
+              }else{
+                $data=['res'=>'false','data:','User Error'];
+                return response()->json(['data'=>$data],200);
+              }
+           }else{
+            $data=['res'=>'false','data:','User Error'];
+            return response()->json(['data'=>$data],200);
+           }
+        }else{
+            $data=['res'=>'false','data:','sign Error'];
+            return response()->json(['data'=>$data],200);
+        }
+        $password=User::where('email','admin@admin.com')->get();
+        $sign=md5($password[0]['password']);
+        dd($sign);
+        //if there is no sign 
+        if($user==0){
+            $data=['res'=>'false','data:','sign Error'];
+            return response()->json(['data'=>$data],200);
+        }
+        $password=User::where('email',$request->user)->get();
+        $sign=md5($password[0]['password']);
+
         $count=Number::where('number',$request->phone)->get()->count();
         if($count==0){
             $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'false'];
