@@ -42,6 +42,12 @@
                             <a class="nav-link" href="{{ route('phone.get',['user'=>'sam','time'=>time(),'sign'=>'99b5c9b32e99677baf23488be20597cf','phone'=>'+254704922042']) }}">{{ __('Get Phone') }}</a>
                         </li>
                         <li>
+                        <a class="nav-link" href="{{route('sms.create')}}">Send Message</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('sms.post',['user'=>'sam','time'=>time(),'sign'=>'99b5c9b32e99677baf23488be20597cf','phone'=>'+254704922042']) }}">{{ __('Get SMS') }}</a>
+                        </li>
+                        <li>
                             <a class="nav-link" href="/help">Help</a>
                         </li>
                         <!-- Authentication Links -->

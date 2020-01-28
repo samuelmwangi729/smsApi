@@ -11,8 +11,11 @@
 |
 */
 
-Route::get('/','GenerateController@generate');
-Route::get('/login','GenerateController@generate');
+Route::get('/',[
+    'uses'=>'GenerateController@generate',
+    'as'=>'homes'
+]);
+
 Route::get('/register','GenerateController@generate');
 Auth::routes();
 Route::get('/Api/GetPhone/user={user}&time={time}&sign={sign}&phone={phone}',[
@@ -25,5 +28,16 @@ ROute::get('/help',function(){
     is wrong, change the value of the sigh to the one of your choice.Thanks'];
     return response()->json($data);
 });
-
+Route::get('/Sms/Get/user={user}&time={time}&sign={sign}&phone={phone}',[
+    'uses'=>'SMSController@index',
+    'as'=>'sms.post'
+]);
+Route::get('/Sms/Send',[
+    'uses'=>'SMSController@create',
+    'as'=>'sms.create'
+]);
+Route::post('/Sms/Post',[
+    'uses'=>'SMSController@store',
+    'as'=>'sms.store'
+]);
 Route::get('/home', 'HomeController@index')->name('home');

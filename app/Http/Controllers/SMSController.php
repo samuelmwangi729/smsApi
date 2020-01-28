@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 use App\Number;
 use App\User;
 use App\Sign;
+use App\SMS;
+use Session;
 use Illuminate\Http\Request;
-
-class PhoneController extends Controller
+class SMSController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,10 +16,11 @@ class PhoneController extends Controller
      */
     public function index(Request $request)
     {
-        
-        $signExists=Sign::where('sign',$request->sign)->get()->first();
+        $signExists=Sign::where('sign',$request->sign)->first();
         if(is_null($signExists)){
-            return response()->json('No data');
+            return response(json_encode([
+                'data'=>'No Data Available'
+            ]));
         }else{
             if($signExists->count()==1){
                 $user=User::find($signExists->id);
@@ -26,8 +28,16 @@ class PhoneController extends Controller
                    if($user->email==$request->user){
                        $number=Number::where('number',$request->phone)->get()->count();
                        if($number>0){
-                         $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Found','res'=>'true'];
+                        $message=SMS::where('number',$request->phone)->get()->last();
+                        if(is_null($message)){
+                            $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'message'=>'null','res'=>'true'];
+                            return response()->json([$data],200);
+                        }else{
+                            $msg=$message['message'];
+                         $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'message'=>$msg,'status'=>'Found','res'=>'true'];
                          return response()->json([$data],200);
+                        }
+                         
                        }else{
                              $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'true'];
                              return response()->json([$data],200);
@@ -44,20 +54,12 @@ class PhoneController extends Controller
                  $data=['res'=>'false','data:','sign Error'];
                  return response()->json(['data'=>$data],200);
              }
-             //if there is no sign 
-             if($user==0){
-                 $data=['res'=>'false','data:','sign Error'];
-                 return response()->json(['data'=>$data],200);
-             }
-             $password=User::where('email',$request->user)->get();
-             $sign=md5($password[0]['password']);
-     
              $count=Number::where('number',$request->phone)->get()->count();
              if($count==0){
                  $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'false'];
                  return response()->json([$data],200);
              }else{
-                 $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Found','res'=>'true'];
+                 $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Founds','res'=>'true'];
                  return response()->json([$data],200);
              }
         }
@@ -70,7 +72,7 @@ class PhoneController extends Controller
      */
     public function create()
     {
-        //
+        return view('smsCreate');
     }
 
     /**
@@ -81,7 +83,37 @@ class PhoneController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $signExists=Sign::where('sign',$request->sign)->first();
+        if(is_null($signExists)){
+            return response(json_encode(['data'=>'Signature error']));
+        }else{
+            if($signExists->count()==1){
+                //thus the sign exists
+                $user=User::find($signExists->user_id);
+                if(is_null($user)){
+                    return response(json_encode(['data'=>'error: User error. User Does Not Exist']));
+                }else{
+                    if($user->count()==1){
+                       $number=Number::where('number',$request->phone);
+                       if($number->count()==0){
+                           return response(json_encode(['data'=>'error, NUmber not Found']));
+                       }else{
+                           //if the number is found, then we post the message 
+                           SMS::create([
+                               'number'=>$request->phone,
+                               'message'=>$request->message
+                           ]);
+                           Session::flash('success','The Message Has been posted');
+                           return redirect()->route('homes');
+                       }
+                    }
+                }
+                dd(json_encode($user));
+            }
+        }
+
+        dd($signExists->count());
     }
 
     /**
