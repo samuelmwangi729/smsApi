@@ -27,13 +27,14 @@ class PhoneController extends Controller
                    if($user->email==$request->user){
                        $number=Number::where('number',$request->phone)->get()->first();
                        if(is_null($number)){
-                           return response(json_encode('Error!!!Number not Found'));
+                        $data=['res'=>'false','data:','Number Error'];
+                           return response(json_encode($data));
                        }else{
                         if($number->number==$request->phone){
-                            $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Found','res'=>'true'];
+                            $data=['res'=>'true','data:'=>'Number Found'];
                             return response()->json([$data],200);
                           }else{
-                                $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'true'];
+                                $data=['res'=>'false','data'=>'Number Error'];
                                 return response()->json([$data],200);
                           }
                        }
