@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\User;
+use App\Sign;
+use Session;
+use Auth;
 class SignController extends Controller
 {
     /**
@@ -34,7 +37,13 @@ class SignController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        Sign::create([
+            'user_id'=>Auth::user()->id,
+            'sign'=>md5($request->sign)
+        ]);
+        Session::flash('sign','Your New sign is '.md5($request->sign));
+        return redirect()->back();
     }
 
     /**

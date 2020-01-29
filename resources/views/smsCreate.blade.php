@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-lg-5 offset-lg-6">
       <div class="card card-default">
-          <div class="panel-heading text-center">
+          <div class="card-header text-center">
               <u><strong>Send A Text Message</strong></u>
           </div>
           <div class="card-body">

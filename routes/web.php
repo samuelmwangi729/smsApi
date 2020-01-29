@@ -40,4 +40,8 @@ Route::post('/Sms/Post',[
     'uses'=>'SMSController@store',
     'as'=>'sms.store'
 ]);
+Route::post('/Sign/New',[
+    'uses'=>'SignController@store',
+    'as'=>'sign.create'
+]);
 Route::get('/home', 'HomeController@index')->name('home');
