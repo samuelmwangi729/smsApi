@@ -17,38 +17,35 @@ class SMSController extends Controller
     public function index(Request $request)
     {
         $signExists=Sign::where('sign',$request->sign)->first();
+        // dd($signExists);
         if(is_null($signExists)){
             return response(json_encode([
                 'data'=>'No Data Available'
             ]));
         }else{
-            if($signExists->count()==1){
+            if($signExists->sign==$request->sign){
                 $user=User::find($signExists->id);
-                if($user->count()==1){
-                   if($user->email==$request->user){
-                       $number=Number::where('number',$request->phone)->get()->count();
-                       if($number>0){
-                        $message=SMS::where('number',$request->phone)->get()->last();
-                        if(is_null($message)){
-                            $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'message'=>'null','res'=>'true'];
-                            return response()->json([$data],200);
-                        }else{
-                            $msg=$message['message'];
-                         $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'message'=>$msg,'status'=>'Found','res'=>'true'];
+                // dd($user->email);
+                if($user->email==$request->user){
+                    $number=Number::where('number',$request->phone)->get()->count();
+                    if($number>0){
+                     $message=SMS::where('number',$request->phone)->get()->last();
+                     if(is_null($message)){
+                         $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'message'=>'null','res'=>'true'];
                          return response()->json([$data],200);
-                        }
-                         
-                       }else{
-                             $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'true'];
-                             return response()->json([$data],200);
-                       }
-                   }else{
-                     $data=['res'=>'false','data:','User Error'];
-                     return response()->json(['data'=>$data],200);
-                   }
+                     }else{
+                         $msg=$message['message'];
+                      $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'message'=>$msg,'status'=>'Found','res'=>'true'];
+                      return response()->json([$data],200);
+                     }
+                      
+                    }else{
+                          $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'true'];
+                          return response()->json([$data],200);
+                    }
                 }else{
-                 $data=['res'=>'false','data:','User Error'];
-                 return response()->json(['data'=>$data],200);
+                  $data=['res'=>'false','data:','User Error'];
+                  return response()->json(['data'=>$data],200);
                 }
              }else{
                  $data=['res'=>'false','data:','sign Error'];
@@ -88,13 +85,13 @@ class SMSController extends Controller
         if(is_null($signExists)){
             return response(json_encode(['data'=>'Signature error']));
         }else{
-            if($signExists->count()==1){
+            if($signExists->sign==$request->sign){
                 //thus the sign exists
                 $user=User::find($signExists->user_id);
                 if(is_null($user)){
                     return response(json_encode(['data'=>'error: User error. User Does Not Exist']));
                 }else{
-                    if($user->count()==1){
+                    if($user->email==$request->user){
                        $number=Number::where('number',$request->phone);
                        if($number->count()==0){
                            return response(json_encode(['data'=>'error, NUmber not Found']));
@@ -113,7 +110,7 @@ class SMSController extends Controller
             }
         }
 
-        dd($signExists->count());
+        // dd($signExists->count());
     }
 
     /**
