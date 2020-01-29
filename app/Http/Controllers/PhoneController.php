@@ -25,13 +25,17 @@ class PhoneController extends Controller
                 $user=User::find($signExists->id);
                 if($user->email==$request->user){
                    if($user->email==$request->user){
-                       $number=Number::where('number',$request->phone)->get();
-                       if($number[0]['number']==$request->phone){
-                         $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Found','res'=>'true'];
-                         return response()->json([$data],200);
+                       $number=Number::where('number',$request->phone)->get()->first();
+                       if(is_null($number)){
+                           return response(json_encode('Error!!!Number not Found'));
                        }else{
-                             $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'true'];
-                             return response()->json([$data],200);
+                        if($number->number==$request->phone){
+                            $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Found','res'=>'true'];
+                            return response()->json([$data],200);
+                          }else{
+                                $data=['user'=>$request->user,'time'=>$request->time,'phone'=>$request->phone,'status'=>'Not Found','res'=>'true'];
+                                return response()->json([$data],200);
+                          }
                        }
                    }else{
                      $data=['res'=>'false','data:','User Error'];
